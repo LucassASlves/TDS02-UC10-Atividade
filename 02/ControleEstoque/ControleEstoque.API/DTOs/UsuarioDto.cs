@@ -41,4 +41,11 @@ namespace ControleEstoque.API.DTOs
         public string Senha { get; set; } = string.Empty;
         public string Setor { get; set; } = string.Empty;
     }
+
+
+   public class LoginDto
+    {
+        public string Email { get; set; } = string.Empty; // O email do usuário que está tentando fazer login
+        public string Senha { get; set; } = string.Empty;
+    }
 }
