@@ -105,5 +105,35 @@ namespace ControleEstoque.API.Services
             if (usuario is Gerente gerente) dto.Setor = gerente.Setor;
             return dto;
         }
+
+        public async Task AtualizarClienteAsync(AtualizarClienteDto dto)
+        {
+            var cliente = await _context.Clientes
+                .FirstOrDefaultAsync(c => c.Id == dto.Id);
+
+            if (cliente == null) 
+                throw new KeyNotFoundException("Cliente não encontrado");
+
+            if (cliente.Email != dto.Email)
+            {
+                var emailJaExiste = await _context.Usuarios
+                    .AnyAsync(u => u.Email == dto.Email);
+
+                if (emailJaExiste) 
+                    throw new InvalidOperationException("Esse email já está cadastrado!");
+            }
+
+            // atualiza a senha, se foi fornecida
+            if(!string.IsNullOrEmpty(dto.Senha))
+                cliente.SenhaHash = _passwordService.HashPassword(dto.Senha);
+
+            cliente.Nome = dto.Nome;
+            cliente.Email = dto.Email;
+            cliente.CPF = dto.CPF;
+
+            // salva as mudanças
+            _context.Clientes.Update(cliente);
+            await _context.SaveChangesAsync();            
+        }
     }
 }

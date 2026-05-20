@@ -49,13 +49,15 @@ namespace ControleEstoque.API.Controllers
             try
             {
                 var usuario = await _usuarioService.AutenticarAsync(dto);
-                if (usuario == null) return NotFound();
+
+                if (usuario == null)
+                    return Unauthorized(new { message = "Email ou senha incorretos"});                
 
                 return Ok(usuario);
             }
             catch (Exception ex)
             {
-                return null;
+                return BadRequest(new { message = ex.Message});
             }
         }
     }
